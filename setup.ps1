@@ -75,15 +75,12 @@ function Install-FlixCli {
     Print-Style "Installing flix-cli to $installDir..." "info"
     Copy-Item -Path (Join-Path $PSScriptRoot "flix-cli.ps1") -Destination $binDir -Force
 
-    # Retrieve the Path environment variable
+    # Add the installation directory to PATH if not already present
     $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    
-    # Initialize Path if it's null
     if (-not $pathEnv) {
         $pathEnv = ""
     }
-    
-    # Check if binDir is in the Path
+
     if (-not $pathEnv.Contains($binDir)) {
         Print-Style "Adding $binDir to PATH..." "info"
         [System.Environment]::SetEnvironmentVariable("Path", "$pathEnv;$binDir", [System.EnvironmentVariableTarget]::User)
@@ -107,6 +104,10 @@ function Uninstall-FlixCli {
 
     # Remove the installation directory from PATH
     $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+    if (-not $pathEnv) {
+        $pathEnv = ""
+    }
+
     if ($pathEnv.Contains($binDir)) {
         Print-Style "Removing $binDir from PATH..." "info"
         $newPathEnv = [string]::Join(';', ($pathEnv -split ';' | Where-Object { $_ -ne $binDir }))
