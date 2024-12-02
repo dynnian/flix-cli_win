@@ -91,6 +91,7 @@ function Install-FlixCli {
         $command = $dependencies[$dep]
         if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
             Print-Style "Installing $dep..." "info"
+            scoop bucket add extras
             scoop install $dep
         } else {
             Print-Style "$dep is already installed." "success"

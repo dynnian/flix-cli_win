@@ -23,16 +23,24 @@ flix-cli is a PowerShell script that scrapes movies from 1337x to retrieve magne
 
 ### Using the Setup Script
 
-1. Clone the repository:
+1. Install scoop if you don't have it, from [here](https://scoop.sh/). If you do, then skip this.
 
-    ```powershell
+2. Install git with scoop
+
+    ```
+    scoop install git
+    ```
+
+2. Clone the repository:
+
+    ```
     git clone https://github.com/d4r1us-drk/flix-cli_win.git
     cd flix-cli_win
     ```
 
-2. Run the setup script to install dependencies and configure the script:
+3. Run the setup script to install dependencies and configure the script:
 
-    ```powershell
+    ```
     .\setup.ps1
     ```
 
