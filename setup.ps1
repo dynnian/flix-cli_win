@@ -27,6 +27,49 @@ function Print-Style {
     Write-Host $Message -ForegroundColor $color
 }
 
+# Function to safely modify the Path environment variable
+function Modify-Path {
+    param (
+        [string]$binDir,
+        [switch]$Add
+    )
+
+    # Get the current user Path
+    $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+
+    # Ensure Path is not null or empty
+    if (-not $pathEnv) {
+        $pathEnv = ""
+    }
+
+    # Split Path into entries
+    $pathEntries = $pathEnv -split ';'
+
+    if ($Add) {
+        # Add binDir if it's not already in Path
+        if (-not ($pathEntries -contains $binDir)) {
+            Print-Style "Adding $binDir to PATH..." "info"
+            $pathEntries += $binDir
+            $newPathEnv = [string]::Join(';', $pathEntries)
+            [System.Environment]::SetEnvironmentVariable("Path", $newPathEnv, [System.EnvironmentVariableTarget]::User)
+            Print-Style "Please restart your terminal to apply the updated PATH." "warning"
+        } else {
+            Print-Style "$binDir is already in PATH." "success"
+        }
+    } else {
+        # Remove binDir if it exists in Path
+        if ($pathEntries -contains $binDir) {
+            Print-Style "Removing $binDir from PATH..." "info"
+            $pathEntries = $pathEntries | Where-Object { $_ -ne $binDir }
+            $newPathEnv = [string]::Join(';', $pathEntries)
+            [System.Environment]::SetEnvironmentVariable("Path", $newPathEnv, [System.EnvironmentVariableTarget]::User)
+            Print-Style "Please restart your terminal to apply the updated PATH." "warning"
+        } else {
+            Print-Style "$binDir was not found in PATH." "warning"
+        }
+    }
+}
+
 # Function to install flix-cli
 function Install-FlixCli {
     # Ensure Scoop is installed
@@ -75,20 +118,8 @@ function Install-FlixCli {
     Print-Style "Installing flix-cli to $installDir..." "info"
     Copy-Item -Path (Join-Path $PSScriptRoot "flix-cli.ps1") -Destination $binDir -Force
 
-    # Add the installation directory to PATH if not already present
-    $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    if (-not $pathEnv) {
-        $pathEnv = ""
-    }
-
-    if (-not $pathEnv.Contains($binDir)) {
-        Print-Style "Adding $binDir to PATH..." "info"
-        [System.Environment]::SetEnvironmentVariable("Path", "$pathEnv;$binDir", [System.EnvironmentVariableTarget]::User)
-        Print-Style "Please restart your terminal to apply the updated PATH." "warning"
-    } else {
-        Print-Style "$binDir is already in PATH." "success"
-    }
-
+    # Add binDir to PATH
+    Modify-Path -binDir $binDir -Add
     Print-Style "Installation complete! You can now use flix-cli by running 'flix-cli.ps1' from any terminal." "success"
 }
 
@@ -102,21 +133,8 @@ function Uninstall-FlixCli {
         Print-Style "Installation directory not found. Nothing to remove." "warning"
     }
 
-    # Remove the installation directory from PATH
-    $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
-    if (-not $pathEnv) {
-        $pathEnv = ""
-    }
-
-    if ($pathEnv.Contains($binDir)) {
-        Print-Style "Removing $binDir from PATH..." "info"
-        $newPathEnv = [string]::Join(';', ($pathEnv -split ';' | Where-Object { $_ -ne $binDir }))
-        [System.Environment]::SetEnvironmentVariable("Path", $newPathEnv, [System.EnvironmentVariableTarget]::User)
-        Print-Style "Please restart your terminal to apply the updated PATH." "warning"
-    } else {
-        Print-Style "$binDir was not found in PATH." "warning"
-    }
-
+    # Remove binDir from PATH
+    Modify-Path -binDir $binDir -Add:$false
     Print-Style "Uninstallation complete! flix-cli has been removed." "success"
 }
 
