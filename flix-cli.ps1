@@ -1,6 +1,6 @@
 # Variables
 $baseurl = "https://1337x.to"
-$cachedir = "$HOME\AppData\Local\flix-cli"
+$cachedir = "$HOME\AppData\Local\flix-cli\temp"
 New-Item -ItemType Directory -Force -Path $cachedir > $null
 
 # Function to print styled text
