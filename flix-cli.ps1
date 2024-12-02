@@ -135,7 +135,6 @@ try {
     }
 
     $fullURL = "$baseurl$($urls[$selectedIndex - 1])"
-    Print-Style "Constructed URL: $fullURL" "info"
 
     $magnet = Get-Magnet-Link -FullURL $fullURL
 
