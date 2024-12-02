@@ -1,5 +1,10 @@
 # setup.ps1 - Installation and Uninstallation Script for flix-cli on Windows
 
+# Main script parameters
+param (
+    [switch]$Uninstall
+)
+
 # Define the user directory for installation
 $installDir = "$HOME\AppData\Local\flix-cli"
 $binDir = "$installDir\bin"
@@ -99,11 +104,7 @@ function Uninstall-FlixCli {
     Print-Style "Uninstallation complete! flix-cli has been removed." "success"
 }
 
-# Main script
-param (
-    [switch]$Uninstall
-)
-
+# Main script execution
 if ($Uninstall) {
     Uninstall-FlixCli
 } else {
