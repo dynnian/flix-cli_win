@@ -75,16 +75,15 @@ function Install-FlixCli {
     Print-Style "Installing flix-cli to $installDir..." "info"
     Copy-Item -Path (Join-Path $PSScriptRoot "flix-cli.ps1") -Destination $binDir -Force
 
-    # Add the installation directory to PATH if not already present
-    # Get the user environment variable for PATH
+    # Retrieve the Path environment variable
     $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
     
-    # Ensure $pathEnv is not null
+    # Initialize Path if it's null
     if (-not $pathEnv) {
         $pathEnv = ""
     }
     
-    # Check if the bin directory is already in the PATH
+    # Check if binDir is in the Path
     if (-not $pathEnv.Contains($binDir)) {
         Print-Style "Adding $binDir to PATH..." "info"
         [System.Environment]::SetEnvironmentVariable("Path", "$pathEnv;$binDir", [System.EnvironmentVariableTarget]::User)
