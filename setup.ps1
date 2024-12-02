@@ -36,9 +36,17 @@ function Install-FlixCli {
     }
 
     # Install dependencies using Scoop
-    $dependencies = @("git", "curl", "mpv", "nodejs", "fzf")
-    foreach ($dep in $dependencies) {
-        if (-not (scoop which $dep)) {
+    $dependencies = @{
+        "git"     = "git"
+        "curl"    = "curl"
+        "mpv"     = "mpv"
+        "nodejs"  = "npm"
+        "fzf"     = "fzf"
+    }
+    
+    foreach ($dep in $dependencies.Keys) {
+        $command = $dependencies[$dep]
+        if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
             Print-Style "Installing $dep..." "info"
             scoop install $dep
         } else {
