@@ -102,7 +102,7 @@ function Uninstall-FlixCli {
     $pathEnv = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
     if ($pathEnv.Contains($binDir)) {
         Print-Style "Removing $binDir from PATH..." "info"
-        $newPathEnv = ($pathEnv -split ';') | Where-Object { $_ -ne $binDir } -join ';'
+        $newPathEnv = [string]::Join(';', ($pathEnv -split ';' | Where-Object { $_ -ne $binDir }))
         [System.Environment]::SetEnvironmentVariable("Path", $newPathEnv, [System.EnvironmentVariableTarget]::User)
         Print-Style "Please restart your terminal to apply the updated PATH." "warning"
     } else {
